@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find the deadline supported by a revised application notice. See the exact quote, or know when to ask for clarification.">
+  <meta name="theme-color" content="#f8f6ef">
+  <title>Deadline Delta — Check the revised deadline</title>
+  <style>
+    :root { color-scheme: light; --paper:#f8f6ef; --white:#fffefa; --ink:#172e32; --muted:#526365; --line:#dcded3; --green:#184944; --mint:#e3efe5; --amber:#874b19; --amber-bg:#f9edda; --blue:#1d5262; --blue-bg:#e6eff1; --radius:17px; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button, input, textarea { font:inherit; }
+    [hidden] { display:none !important; }
+    button { cursor:pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline:3px solid #2d786d; outline-offset:3px; }
+    button:disabled { cursor:not-allowed; }
+    .wrap { width:min(1112px,calc(100% - 56px)); margin-inline:auto; }
+    .top { border-bottom:1px solid var(--line); }
+    .nav { min-height:71px; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:790; font-size:19px; letter-spacing:-.025em; }
+    .mark { width:35px; height:35px; display:grid; place-items:center; color:#fff; background:var(--green); border-radius:10px; }
+    .tools { display:flex; align-items:center; gap:12px; }
+    .connection { border:1px solid var(--line); border-radius:99px; padding:4px 10px; color:var(--muted); font-size:12px; font-weight:700; white-space:nowrap; }
+    .connection.online { border-color:#c5d8c8; color:var(--green); background:var(--mint); }
+    .languages { display:flex; gap:2px; padding:3px; border:1px solid var(--line); border-radius:9px; }
+    .languages button { border:0; background:transparent; color:var(--muted); padding:3px 7px; border-radius:5px; font-size:12px; font-weight:750; }
+    .languages button[aria-pressed=true] { background:var(--ink); color:#fff; }
+    .hero { position:relative; isolation:isolate; overflow:hidden; margin-top:22px; padding:24px 34px 26px; border-radius:var(--radius); background:#173d3a; color:#fffdf3; }
+    .hero::after { content:""; position:absolute; z-index:-1; width:285px; height:285px; right:25px; top:-9px; opacity:.25; border-radius:50%; background:repeating-radial-gradient(circle,transparent 0 16px,#b7d8c0 17px 18px,transparent 19px 29px); }
+    .eyebrow { font-size:11px; text-transform:uppercase; letter-spacing:.17em; font-weight:800; }
+    .hero .eyebrow { color:#c9e4cc; }
+    h1 { margin:7px 0 8px; max-width:740px; font:600 clamp(35px,5vw,57px)/1.04 Georgia,"Times New Roman",serif; letter-spacing:-.047em; }
+    .hero p { margin:0; max-width:600px; color:#e0ede5; font-size:16px; }
+    .scenarios { margin:15px 0 10px; display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
+    .scenarios .eyebrow { color:var(--muted); }
+    .route-controls { margin:0 0 10px; padding:10px 13px; border:1px solid var(--line); border-radius:11px; background:var(--white); display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:8px 12px; }
+    .route-controls label { font-weight:760; font-size:13px; }
+    .route-controls p { margin:0; color:var(--muted); font-size:12px; }
+    .route-entry { display:grid; gap:7px; }
+    .route-entry input { width:100%; min-width:0; color:var(--ink); background:#f7f9f4; border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:13px; }
+    .route-options button[aria-pressed=true] { background:var(--green); color:white; border-color:var(--green); }
+    .decision { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:15px 25px; padding:16px 19px; background:var(--white); border:1px solid #bed6c8; border-left:5px solid #417c62; border-radius:13px; }
+    .decision.review { border-color:#e6cfad; border-left-color:#a76024; }
+    .decision .eyebrow { display:block; color:var(--green); margin-bottom:4px; }
+    .decision.review .eyebrow { color:var(--amber); }
+    .decision h2 { font:600 clamp(22px,3.2vw,31px)/1.05 Georgia,"Times New Roman",serif; letter-spacing:-.03em; }
+    .decision p { color:var(--muted); font-size:13px; margin:5px 0 0; }
+    .decision .route-tag { display:inline-block; margin-top:6px; color:var(--green); background:var(--mint); border-radius:5px; padding:2px 6px; font-size:11px; font-weight:760; overflow-wrap:anywhere; }
+    .route-proof { grid-column:1/-1; border-top:1px solid var(--line); padding-top:9px; }
+    .route-proof blockquote { margin:0 0 3px; font-size:13px; overflow-wrap:anywhere; }
+    .dates { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); align-self:stretch; gap:8px; }
+    .date-panel { min-width:0; padding:9px 11px; border-radius:9px; background:#f1f2eb; }
+    .date-panel.current { background:var(--mint); }
+    .review .date-panel.current { background:var(--amber-bg); }
+    .date-panel span { display:block; font-size:10px; color:var(--muted); font-weight:780; letter-spacing:.05em; text-transform:uppercase; }
+    .date-panel strong { display:block; margin-top:3px; font-size:clamp(14px,1.7vw,19px); line-height:1.17; letter-spacing:-.015em; }
+    .date-panel small { display:block; margin-top:3px; font-size:11px; color:var(--muted); }
+    .date-panel.current strong { color:var(--green); }
+    .review .date-panel.current strong { color:var(--amber); }
+    .jump { display:table; margin-top:5px; font-size:12px; font-weight:770; text-decoration:underline; text-underline-offset:3px; color:var(--green); }
+    .work { margin-top:20px; }
+    .work-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+    h2 { margin:0; font-size:20px; letter-spacing:-.025em; line-height:1.2; }
+    .samples { display:flex; flex-wrap:wrap; gap:6px; }
+    .sample { color:var(--green); background:var(--white); border:1px solid var(--line); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:720; }
+    .sample:hover, .sample[aria-pressed=true] { background:var(--mint); border-color:#b4cec0; }
+    .editor-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .editor { background:var(--white); border:1px solid var(--line); border-radius:13px; overflow:hidden; }
+    .editor-head { display:flex; align-items:center; gap:10px; padding:11px 13px; border-bottom:1px solid var(--line); }
+    .version { display:grid; place-items:center; width:24px; height:24px; border-radius:7px; font-size:12px; font-weight:800; color:var(--blue); background:var(--blue-bg); }
+    .editor:nth-child(2) .version { color:var(--green); background:var(--mint); }
+    .editor label { font-weight:760; font-size:14px; }
+    .count { margin-left:auto; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+    textarea { display:block; width:100%; min-height:158px; resize:vertical; padding:13px; border:0; background:transparent; color:var(--ink); font-size:13px; line-height:1.62; }
+    textarea:focus-visible { outline-offset:-3px; }
+    .run-row { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:11px 0 0; }
+    .primary { display:inline-flex; align-items:center; justify-content:center; gap:9px; border:0; border-radius:9px; padding:10px 15px; background:var(--green); color:#fff; font-weight:770; font-size:14px; }
+    .primary:hover:not(:disabled) { background:#216257; }
+    .primary:disabled { background:#dbe5df; color:#48615a; }
+    .run-hint { color:var(--muted); font-size:12px; margin:0; }
+    .message { margin:7px 0 0; color:#883919; font-size:13px; }
+    .message:empty { display:none; }
+    .results { margin:24px 0 31px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--white); }
+    .results-header { padding:15px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-bottom:1px solid var(--line); }
+    .results-header .eyebrow { display:block; color:var(--muted); font-size:10px; margin-bottom:3px; }
+    .metrics { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip { display:inline-flex; align-items:center; color:var(--muted); background:#f0f1eb; border-radius:99px; padding:4px 9px; font-size:11px; font-weight:800; line-height:1.3; white-space:nowrap; }
+    .chip.changed, .chip.review { color:var(--amber); background:var(--amber-bg); }
+    .chip.added, .chip.same, .chip.scoped { color:var(--green); background:var(--mint); }
+    .signal { margin:12px 15px 0; padding:8px 10px; background:var(--blue-bg); border:1px solid #d8e5e6; border-radius:9px; font-size:12px; color:#274e55; }
+    .signal strong { margin-right:5px; }
+    .fields { padding:0 15px 10px; }
+    .field { border-bottom:1px solid var(--line); padding:10px 0; scroll-margin-top:12px; }
+    .field:last-child { border-bottom:0; }
+    .field-title { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 5px; }
+    .field-title h3 { font-size:14px; margin:0; }
+    .field-note { margin:0 0 6px; color:var(--muted); font-size:12px; }
+    .evidence { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .excerpt { min-width:0; border:1px solid #e8e9df; background:#fafbf7; border-radius:8px; padding:6px 9px; }
+    .excerpt span { display:block; margin-bottom:2px; font-size:10px; font-weight:760; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+    .excerpt blockquote { margin:0; overflow-wrap:anywhere; font-size:13px; }
+    .excerpt blockquote + blockquote { margin-top:4px; }
+    .line-num { color:var(--green); border:0; border-radius:4px; background:var(--mint); font-size:10px; font-weight:750; padding:1px 4px; margin-right:5px; white-space:nowrap; text-decoration:underline; }
+    .empty { padding:19px 16px; color:var(--muted); font-size:14px; }
+    .footer { border-top:1px solid var(--line); padding:13px 0 21px; color:var(--muted); font-size:12px; }
+    @media (max-width:680px) {
+      .wrap { width:calc(100% - 28px); }
+      .nav { min-height:60px; gap:7px; }
+      .brand { font-size:16px; gap:6px; white-space:nowrap; }
+      .mark { width:29px; height:29px; }
+      .tools { gap:5px; }
+      .connection { padding:3px 5px; font-size:10px; }
+      .languages button { padding:3px 5px; }
+      .hero { margin-top:15px; padding:22px 18px; }
+      .hero::after { opacity:.14; right:-120px; }
+      .hero p { font-size:14px; }
+      .route-controls { grid-template-columns:1fr; }
+      .decision { grid-template-columns:1fr; gap:10px; padding:12px 13px; }
+      .dates { gap:6px; }
+      .work { margin-top:18px; }
+      .editor-grid { grid-template-columns:1fr; }
+      textarea { min-height:145px; }
+    }
+    @media (max-width:410px) { .evidence { grid-template-columns:1fr; } }
+    @media (prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto !important; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="nav wrap">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none"><path d="M12 4.5 20 18H4l8-13.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.5 13h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        Deadline Delta
+      </div>
+      <div class="tools">
+        <span id="connection" class="connection" aria-live="polite">Example mode</span>
+        <div class="languages" role="group" aria-label="Language">
+          <button type="button" lang="en" id="en" aria-pressed="true">EN</button>
+          <button type="button" lang="de" id="de" aria-pressed="false">DE</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="eyebrow" data-i18n="kicker">Application notice checker</div>
+      <h1 id="hero-title" data-i18n="hero">Which deadline applies to me?</h1>
+      <p data-i18n="intro">Compare two versions of an application notice. Find the cutoff for your applicant group or submission route, with the exact line that supports it.</p>
+    </section>
+    <div class="scenarios">
+      <span class="eyebrow" data-i18n="trySample">Try an example</span>
+      <div class="samples" aria-label="Example notices">
+        <button type="button" class="sample" id="byGroup" aria-pressed="true" data-i18n="byGroup">Different groups · EN</button>
+        <button type="button" class="sample" id="exchange" aria-pressed="false" data-i18n="exchange">Date pending · DE</button>
+        <button type="button" class="sample" id="scholarship" aria-pressed="false" data-i18n="scholarship">Date moved · EN</button>
+        <button type="button" class="sample" id="twoDates" aria-pressed="false" data-i18n="twoDates">Two cutoffs · EN</button>
+      </div>
+    </div>
+    <div class="route-controls">
+      <div>
+        <label for="route" data-i18n="routeLabel">Applicant group or submission route</label>
+        <p id="route-hint" data-i18n="routeHint">Optional. Use the label from the notice.</p>
+      </div>
+      <div class="route-entry">
+        <input id="route" type="text" maxlength="90" autocomplete="off" placeholder="e.g. Renewal applicants" aria-describedby="route-hint">
+        <div class="samples route-options" id="route-options" aria-label="Example applicant groups" hidden>
+          <button type="button" class="sample" id="group-none" aria-pressed="true" data-i18n="groupNone">No group selected</button>
+          <button type="button" class="sample" id="group-first" aria-pressed="false" data-i18n="groupFirst">First-time applicants</button>
+          <button type="button" class="sample" id="group-renewal" aria-pressed="false" data-i18n="groupRenewal">Renewal applicants</button>
+        </div>
+      </div>
+    </div>
+    <section id="decision" class="decision" aria-live="polite" hidden></section>
+    <section class="work" aria-labelledby="compare-title">
+      <div class="work-header">
+        <h2 id="compare-title" data-i18n="notices">Compare notices</h2>
+        <button type="button" class="sample" id="clear" data-i18n="clear">Start blank</button>
+      </div>
+      <div class="editor-grid">
+        <div class="editor">
+          <div class="editor-head"><span class="version" aria-hidden="true">A</span><label for="earlier" data-i18n="earlier">Earlier notice</label><span class="count" id="earlier-count"></span></div>
+          <textarea id="earlier" maxlength="4800" spellcheck="false" aria-describedby="input-note"></textarea>
+        </div>
+        <div class="editor">
+          <div class="editor-head"><span class="version" aria-hidden="true">B</span><label for="revised" data-i18n="revised">Revised notice</label><span class="count" id="revised-count"></span></div>
+          <textarea id="revised" maxlength="4800" spellcheck="false" aria-describedby="input-note"></textarea>
+        </div>
+      </div>
+      <div class="run-row">
+        <button type="button" class="primary" id="compare" disabled><span aria-hidden="true">⇄</span><span id="compare-text">Compare with Clocked</span></button>
+        <p class="run-hint" id="input-note">The examples can be explored without an API connection.</p>
+      </div>
+      <p class="message" id="message" role="status"></p>
+    </section>
+    <section id="results" class="results" aria-label="Comparison results" aria-live="polite"></section>
+  </main>
+  <footer class="footer"><div class="wrap" data-i18n="footer">Deadline Delta · Built for the Clocked Build Challenge · Example notices are fictional.</div></footer>
+  <script>
+    "use strict";
+    const LIMIT = 4800;
+    const ROUTE_LIMIT = 90;
+    const groupLabels = {none:"",first:"First-time applicants",renewal:"Renewal applicants"};
+    const $ = id => document.getElementById(id);
+    const strings = {
+      en: {
+        kicker:"Application notice checker", hero:"Which deadline applies to me?",
+        intro:"Compare two versions of an application notice. Find the cutoff for your applicant group or submission route, with the exact line that supports it.",
+        trySample:"Try an example", notices:"Compare notices", byGroup:"Different groups · EN", scholarship:"Date moved · EN", exchange:"Date pending · DE", twoDates:"Two cutoffs · EN", clear:"Start blank",
+        routeLabel:"Applicant group or submission route", routeHint:"Optional. Use the label from the notice.", routePlaceholder:"e.g. Renewal applicants",
+        groupNone:"No group selected", groupFirst:"First-time applicants", groupRenewal:"Renewal applicants",
+        earlier:"Earlier notice", revised:"Revised notice", compare:"Compare with Clocked", checking:"Comparing notices…",
+        online:"Live comparison ready", example:"Example mode", checkingConnection:"Checking connection…",
+        offlineNote:"The examples can be explored without an API connection.",
+        liveNote:"Use public notices. A live comparison sends the notices and selected group to Clocked.",
+        results:"What changed", preview:"Example analysis · no API call", live:"Live analysis · Clocked",
+        empty:"Add two notices or choose an example to see a comparison.",
+        deadline:"Deadline", documents:"Required documents", channel:"Submission channel", eligibility:"Eligibility",
+        changed:"Differs", added:"New evidence", review:"Check first", same:"Matches", absent:"No evidence", scoped:"Matches your group",
+        deadlineCheck:"Deadline check", demoCheck:"Example result", verifiedCheck:"Clocked Verify · supported", routeCheck:"Clocked Rerank + Verify · supported",
+        reviewHeading:"Confirm before applying", statedHeading:"The revised text supports a date", routeHeading:"Deadline for your group", seeEvidence:"See deadline evidence ↓",
+        routeProof:"Why this date applies", routeTag:"Checking:", scopedDate:"Deadline for this group",
+        oldDate:"Earlier deadline", revisedDate:"Revised deadline", referenceOnly:"Earlier version only", dateNotSet:"Needs confirmation", dateUnavailable:"No single date found",
+        timeNotSet:"Time not stated", zoneNotSet:"Confirm time zone",
+        new_date:"The revision gives a different deadline. Check the exact wording below.",
+        same_date:"The two notices state the same deadline, even if the format or time zone differs.",
+        date_stated:"One date is supported by the revised notice. Check the exact wording below.",
+        deadline_precision:"The calendar date matches, but a time or time zone is missing. Confirm the exact cutoff.",
+        multiple_deadlines:"The revision gives multiple possible deadlines. Confirm which one applies with the issuer.",
+        choose_route:"The revised notice has different cutoffs for first-time and renewal applicants. Choose a group above to see its date.",
+        route_verified:"The revised text supports one cutoff for the selected group or route.",
+        route_not_found:"No cutoff clause could be matched to this group or route. Use the wording from the notice or ask the issuer.",
+        route_unavailable:"The group could not be matched right now. The extracted lines are shown below for review.",
+        route_unverified:"The revised text does not support one cutoff for this group or route. Check the conditions or ask the issuer.",
+        deadline_missing:"No revised deadline was found in the supplied text. Confirm with the issuer before using the old date.",
+        deadline_incomplete:"The revised wording does not establish a single full date. Ask the issuer to confirm it.",
+        verify_unsupported:"The extracted text does not establish one deadline for all applicants. Check the conditions or ask the issuer.",
+        verify_unavailable:"The extracted wording is shown below. The check of the revised deadline could not be completed.",
+        pending:"A revised deadline is not confirmed. Check with the issuer before relying on the earlier date.",
+        not_verified_in_revision:"No matching statement was verified in the revision. Check before assuming the old rule is gone.",
+        neither:"No matching statement was verified in either notice.",
+        new_evidence:"This detail was found in the revised notice only.",
+        matching:"The extracted wording matches.", matching_deadline:"The stated dates and times match.",
+        deadline_differs:"The stated deadline details differ.", wording_differs:"The wording differs. Read both excerpts to verify the change.",
+        nothing:"No verified excerpt", line:"Line", showLine:"Show source line",
+        sampleSignal:"Example", clockedSignal:"Clocked Compare",
+        conflict:"The notices may conflict. Check the revised text before acting.",
+        overlap:"Clocked flagged overlapping statements. Check the individual excerpts for changes.",
+        signalClear:"Check the excerpts below for individual changes and missing details.",
+        changedTotal:"differ", reviewTotal:"to check", sameTotal:"match",
+        footer:"Deadline Delta · Built for the Clocked Build Challenge · Example notices are fictional.",
+        bad_input:"Enter between 12 and 4,800 characters in each notice, and keep the group label under 91 characters.",
+        not_configured:"Live comparison is unavailable. You can still explore an example.",
+        wrong_origin:"Open the app directly and try again.",
+        rate_limit:"Too many comparisons. Please wait a minute and try again.",
+        provider_auth:"Clocked could not authenticate this demo. Ask the demo owner to check the connection.",
+        provider_limit:"Clocked is limiting requests or the demo has reached its credit limit. Please try later.",
+        unexpected_result:"Clocked returned an incomplete response. Try again with shorter notices.",
+        provider_error:"The live comparison did not finish. Try again or load an example."
+      },
+      de: {
+        kicker:"Bewerbungshinweise prüfen", hero:"Welche Frist gilt für mich?",
+        intro:"Vergleiche zwei Fassungen eines Bewerbungshinweises. Finde die Frist für deine Bewerbergruppe oder den Einreichungsweg und sieh, welche Textstelle sie belegt.",
+        trySample:"Beispiel ansehen", notices:"Hinweise vergleichen", byGroup:"Fristen nach Gruppe · EN", scholarship:"Frist verschoben · EN", exchange:"Frist offen · DE", twoDates:"Zwei Fristen · EN", clear:"Leeren",
+        routeLabel:"Bewerbergruppe oder Einreichungsweg", routeHint:"Optional. Verwende die Bezeichnung aus dem Hinweis.", routePlaceholder:"z. B. Verlängerungsanträge",
+        groupNone:"Keine Gruppe gewählt", groupFirst:"Erstbewerbungen", groupRenewal:"Verlängerungsanträge",
+        earlier:"Frühere Fassung", revised:"Neue Fassung", compare:"Mit Clocked vergleichen", checking:"Hinweise werden verglichen…",
+        online:"Live-Vergleich bereit", example:"Beispielmodus", checkingConnection:"Verbindung wird geprüft…",
+        offlineNote:"Die Beispiele lassen sich ohne API-Verbindung ansehen.",
+        liveNote:"Nur öffentliche Hinweise verwenden. Beim Live-Vergleich erhält Clocked beide Texte und die gewählte Gruppe.",
+        results:"Was hat sich geändert?", preview:"Beispielanalyse · kein API-Aufruf", live:"Live-Analyse · Clocked",
+        empty:"Füge zwei Hinweise ein oder wähle ein Beispiel.",
+        deadline:"Bewerbungsfrist", documents:"Unterlagen", channel:"Einreichung", eligibility:"Voraussetzungen",
+        changed:"Abweichend", added:"Neue Textstelle", review:"Bitte prüfen", same:"Übereinstimmung", absent:"Kein Beleg", scoped:"Gilt für deine Gruppe",
+        deadlineCheck:"Frist prüfen", demoCheck:"Beispielergebnis", verifiedCheck:"Clocked Verify · belegt", routeCheck:"Clocked Rerank + Verify · belegt",
+        reviewHeading:"Vor der Bewerbung nachfragen", statedHeading:"Die neue Fassung belegt eine Frist", routeHeading:"Frist für deine Gruppe", seeEvidence:"Belege zur Frist ansehen ↓",
+        routeProof:"Warum diese Frist gilt", routeTag:"Geprüft wird:", scopedDate:"Frist für diese Gruppe",
+        oldDate:"Frühere Frist", revisedDate:"Neue Frist", referenceOnly:"Nur frühere Fassung", dateNotSet:"Bestätigung nötig", dateUnavailable:"Keine eindeutige Frist gefunden",
+        timeNotSet:"Keine Uhrzeit genannt", zoneNotSet:"Zeitzone prüfen",
+        new_date:"In der neuen Fassung steht eine andere Frist. Prüfe den genauen Wortlaut unten.",
+        same_date:"Beide Fassungen nennen dieselbe Frist, auch bei anderem Format oder anderer Zeitzone.",
+        date_stated:"Die neue Fassung belegt eine Frist. Prüfe den genauen Wortlaut unten.",
+        deadline_precision:"Das Datum stimmt überein, aber eine Uhrzeit oder Zeitzone fehlt. Prüfe die genaue Frist.",
+        multiple_deadlines:"Die neue Fassung nennt mehrere mögliche Fristen. Frag beim Herausgeber nach, welche gilt.",
+        choose_route:"Für Erstbewerbungen und Verlängerungen gelten unterschiedliche Fristen. Wähle oben eine Gruppe.",
+        route_verified:"Die neue Fassung belegt eine Frist für die gewählte Gruppe oder den gewählten Einreichungsweg.",
+        route_not_found:"Für diese Gruppe oder diesen Einreichungsweg wurde keine passende Frist gefunden. Verwende den Wortlaut aus dem Hinweis oder frag nach.",
+        route_unavailable:"Die Gruppe konnte gerade nicht zugeordnet werden. Die gefundenen Textstellen stehen unten zur Prüfung.",
+        route_unverified:"Der neue Text belegt für diese Gruppe oder diesen Einreichungsweg keine eindeutige Frist. Prüfe die Bedingungen oder frag nach.",
+        deadline_missing:"Im neuen Text wurde keine Frist gefunden. Frag nach, bevor du dich auf die frühere Frist verlässt.",
+        deadline_incomplete:"Der neue Wortlaut belegt keine eindeutige vollständige Frist. Bitte den Herausgeber um Bestätigung.",
+        verify_unsupported:"Die Textstelle belegt keine einheitliche Frist für alle Bewerbenden. Prüfe die Bedingungen oder frag nach.",
+        verify_unavailable:"Die Textstelle steht unten. Die Prüfung der neuen Frist konnte nicht abgeschlossen werden.",
+        pending:"Die neue Frist steht noch nicht fest. Verlass dich erst nach Rückfrage auf die frühere Frist.",
+        not_verified_in_revision:"In der neuen Fassung fehlt ein verifizierter Beleg. Prüfe, ob die frühere Regel weiterhin gilt.",
+        neither:"In keiner Fassung wurde eine passende Textstelle verifiziert.",
+        new_evidence:"Diese Angabe wurde nur in der neuen Fassung gefunden.",
+        matching:"Die Textstellen stimmen überein.", matching_deadline:"Die angegebenen Daten und Uhrzeiten stimmen überein.",
+        deadline_differs:"Die Angaben zur Frist unterscheiden sich.", wording_differs:"Die Formulierungen unterscheiden sich. Prüfe beide Textstellen.",
+        nothing:"Keine verifizierte Textstelle", line:"Zeile", showLine:"Quellzeile anzeigen",
+        sampleSignal:"Beispiel", clockedSignal:"Clocked Compare",
+        conflict:"Die Hinweise könnten sich widersprechen. Prüfe die neue Fassung, bevor du handelst.",
+        overlap:"Clocked hat ähnliche Aussagen gefunden. Prüfe die einzelnen Textstellen auf Änderungen.",
+        signalClear:"Prüfe die Textstellen unten auf Änderungen und fehlende Angaben.",
+        changedTotal:"abweichend", reviewTotal:"zu prüfen", sameTotal:"gleich",
+        footer:"Deadline Delta · Für die Clocked Build Challenge · Die Beispielhinweise sind fiktiv.",
+        bad_input:"Gib je Hinweis zwischen 12 und 4.800 Zeichen ein. Für die Gruppe sind höchstens 90 Zeichen möglich.",
+        not_configured:"Der Live-Vergleich ist nicht verfügbar. Du kannst ein Beispiel ansehen.",
+        wrong_origin:"Öffne die App direkt und versuche es erneut.",
+        rate_limit:"Zu viele Vergleiche. Bitte warte eine Minute.",
+        provider_auth:"Clocked konnte die Demo nicht authentifizieren. Bitte die Verbindung prüfen lassen.",
+        provider_limit:"Clocked begrenzt Anfragen oder das Guthaben der Demo ist aufgebraucht. Bitte später versuchen.",
+        unexpected_result:"Clocked hat unvollständig geantwortet. Versuche es mit kürzeren Hinweisen.",
+        provider_error:"Der Live-Vergleich wurde nicht abgeschlossen. Versuche es erneut oder lade ein Beispiel."
+      }
+    };
+    const samples = {
+      byGroup: {
+        earlier:"Maple Bridge Bursary — application notice\nAll applicants must submit by 18 November 2026 at 17:00 CET.\nUpload your CV through the bursary portal.",
+        revised:"Maple Bridge Bursary — revised notice\nFirst-time applicants must submit by 20 November 2026 at 17:00 CET.\nRenewal applicants must submit by 27 November 2026 at 17:00 CET.\nUpload your CV through the bursary portal.",
+        decision:{state:"review",reason:"choose_route",before:{date:"2026-11-18",time:"17:00",zone:"CET"},after:null},
+        rows:[
+          ["deadline","review","choose_route",["All applicants must submit by 18 November 2026 at 17:00 CET."],["First-time applicants must submit by 20 November 2026 at 17:00 CET.","Renewal applicants must submit by 27 November 2026 at 17:00 CET."]],
+          ["documents","same","matching",["your CV"],["your CV"]],
+          ["channel","same","matching",["bursary portal"],["bursary portal"]],
+          ["eligibility","absent","neither",[],[]]
+        ]
+      },
+      scholarship: {
+        earlier: "Northbridge Mobility Scholarship — application notice\nFull-time master’s students in their second year can apply.\nApply by 18 November 2026 at 17:00 CET.\nRequired documents: a CV and a letter of recommendation.\nSubmit through the student portal.",
+        revised: "Northbridge Mobility Scholarship — revised notice\nFull-time master’s students in their second year can apply.\nApply by 25 November 2026 at 17:00 CET.\nRequired documents: a CV. A letter of recommendation is no longer required.\nSubmit through the student portal.",
+        decision:{state:"stated",reason:"new_date",before:{date:"2026-11-18",time:"17:00",zone:"CET"},after:{date:"2026-11-25",time:"17:00",zone:"CET"}},
+        rows: [
+          ["deadline","changed","deadline_differs",["18 November 2026 at 17:00 CET"],["25 November 2026 at 17:00 CET"]],
+          ["documents","changed","wording_differs",["a CV and a letter of recommendation"],["a CV","A letter of recommendation is no longer required."]],
+          ["channel","same","matching",["student portal"],["student portal"]],
+          ["eligibility","same","matching",["Full-time master’s students in their second year can apply."],["Full-time master’s students in their second year can apply."]]
+        ]
+      },
+      exchange: {
+        earlier: "Austauschsemester 2027 — Auswahlrunde\nBewerben können sich Studierende im 3. Semester.\nBewerbungsschluss: 30. November 2026 um 12:00 Uhr MEZ.\nUnterlagen: Motivationsschreiben und Lebenslauf.\nBitte per E-Mail an austausch@example.org senden.",
+        revised: "Austauschsemester 2027 — aktualisierte Auswahlrunde\nBewerben können sich Studierende im 3. Semester.\nDie neue Bewerbungsfrist wird separat bekannt gegeben.\nUnterlagen: Motivationsschreiben und Lebenslauf.\nBitte im Bewerbungsportal hochladen.",
+        decision:{state:"review",reason:"pending",before:{date:"2026-11-30",time:"12:00",zone:"CET"},after:null},
+        rows: [
+          ["deadline","review","pending",["30. November 2026 um 12:00 Uhr MEZ"],["Die neue Bewerbungsfrist wird separat bekannt gegeben."]],
+          ["channel","changed","wording_differs",["per E-Mail an austausch@example.org"],["im Bewerbungsportal"]],
+          ["documents","same","matching",["Motivationsschreiben und Lebenslauf"],["Motivationsschreiben und Lebenslauf"]],
+          ["eligibility","same","matching",["Bewerben können sich Studierende im 3. Semester."],["Bewerben können sich Studierende im 3. Semester."]]
+        ]
+      },
+      twoDates: {
+        earlier: "Juniper Fellowship — application notice\nApplications close on 18 November 2026 at 17:00 CET.\nUpload a CV in the application portal.\nFinal-year undergraduate students can apply.",
+        revised: "Juniper Fellowship — revised application notice\nApplications close on 20 November 2026 at 17:00 CET.\nUpload a CV in the application portal.\nFinal-year undergraduate students can apply.\nSubmission checklist: Submit your application by 22 November 2026 at 17:00 CET.",
+        decision:{state:"review",reason:"multiple_deadlines",before:{date:"2026-11-18",time:"17:00",zone:"CET"},after:null},
+        rows: [
+          ["deadline","review","multiple_deadlines",["Applications close on 18 November 2026 at 17:00 CET."],["Applications close on 20 November 2026 at 17:00 CET.","Submit your application by 22 November 2026 at 17:00 CET."]],
+          ["documents","same","matching",["a CV"],["a CV"]],
+          ["channel","same","matching",["application portal"],["application portal"]],
+          ["eligibility","same","matching",["Final-year undergraduate students can apply."],["Final-year undergraduate students can apply."]]
+        ]
+      }
+    };
+    let locale = "en", online = false, busy = false, checking = location.protocol !== "file:";
+    let activeSample = "", result = null, error = "", revision = 0;
+    const tr = key => strings[locale][key] || strings.en[key] || key;
+    const routeValue = () => $("route").value.trim().replace(/\s+/g," ");
+    function make(tag, className, value) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (value !== undefined) node.textContent = value;
+      return node;
+    }
+    function verifiedExample(source, phrases) {
+      return phrases.map(text => {
+        const start = source.indexOf(text);
+        if (start < 0) throw Error("Example quote missing");
+        return {text, line:source.slice(0,start).split("\n").length};
+      });
+    }
+    function sampleResult(name, route) {
+      const sample = samples[name], group = Object.keys(groupLabels).find(key => groupLabels[key].toLowerCase() === route.toLowerCase());
+      if (route && (name !== "byGroup" || !group)) return null;
+      const rows = sample.rows.map(r => ({
+        key:r[0], status:r[1], note:r[2],
+        before:verifiedExample(sample.earlier,r[3]), after:verifiedExample(sample.revised,r[4])
+      }));
+      let decision = {...sample.decision};
+      if (name === "byGroup" && group !== "none") {
+        const first = group === "first";
+        decision = {...decision,state:"stated",reason:"route_verified",route,
+          after:{date:first ? "2026-11-20" : "2026-11-27",time:"17:00",zone:"CET"},
+          proof:[rows[0].after[first ? 0 : 1]]};
+        rows[0].status = "scoped";
+        rows[0].note = "route_verified";
+      }
+      return {mode:"example",decision,signal:{conflicts:true},rows};
+    }
+    function loadSample(name) {
+      const sample = samples[name];
+      revision += 1; activeSample = name; busy = false; error = "";
+      $("earlier").value = sample.earlier;
+      $("revised").value = sample.revised;
+      $("route").value = "";
+      result = sampleResult(name,"");
+      refresh();
+    }
+    function changeRoute() {
+      revision += 1; busy = false; error = "";
+      result = activeSample ? sampleResult(activeSample,routeValue()) : null;
+      refresh();
+    }
+    function datePanel(label, date, current, review) {
+      const panel = make("div","date-panel" + (current ? " current" : ""));
+      panel.append(make("span","",label));
+      const value = date ? new Intl.DateTimeFormat(locale, {
+        day:"numeric",month:"long",year:"numeric",timeZone:"UTC"
+      }).format(new Date(date.date + "T00:00:00Z")) : tr(current && review ? "dateNotSet" : "dateUnavailable");
+      panel.append(make("strong","",value));
+      if (date) {
+        const time = date.time ? date.time + (date.zone ? " " + date.zone : " · " + tr("zoneNotSet")) : tr("timeNotSet");
+        panel.append(make("small","",(!current && review ? tr("referenceOnly") + " · " : "") + time));
+      }
+      return panel;
+    }
+    function renderDecision() {
+      const out = $("decision");
+      out.replaceChildren();
+      out.hidden = !result?.decision;
+      if (out.hidden) return;
+      const item = result.decision, review = item.state === "review";
+      const scoped = Boolean(item.route);
+      out.classList.toggle("review",review);
+      const copy = make("div");
+      copy.append(make("span","eyebrow",tr(result.mode === "example" ? "demoCheck" : review ? "deadlineCheck" : item.reranked ? "routeCheck" : "verifiedCheck")),
+        make("h2","",tr(review ? "reviewHeading" : scoped ? "routeHeading" : "statedHeading")),make("p","",tr(item.reason)));
+      if (scoped) copy.append(make("span","route-tag",tr("routeTag") + " " + item.route));
+      const proof = make("a","jump",tr("seeEvidence"));
+      proof.href = "#deadline-evidence";
+      copy.append(proof);
+      const dates = make("div","dates");
+      dates.append(datePanel(tr("oldDate"),item.before,false,review || scoped),datePanel(tr(scoped ? "scopedDate" : "revisedDate"),item.after,true,review));
+      out.append(copy,dates);
+      if (scoped && !review && item.proof?.length) {
+        const why = make("div","route-proof");
+        why.append(make("span","eyebrow",tr("routeProof")));
+        for (const quote of item.proof) why.append(quoteBlock("revised",quote));
+        out.append(why);
+      }
+    }
+    function showSource(id, quote) {
+      const input = $(id);
+      const lines = input.value.split("\n");
+      const offset = lines.slice(0,quote.line-1).reduce((n,line)=>n+line.length+1,0);
+      const start = input.value.indexOf(quote.text,offset);
+      if (start < 0) return;
+      input.scrollIntoView({block:"center"});
+      input.focus({preventScroll:true});
+      input.setSelectionRange(start,start+quote.text.length);
+    }
+    function quoteBlock(id, quote) {
+      const block = make("blockquote");
+      const line = make("button","line-num",tr("line") + " " + quote.line);
+      line.type = "button";
+      line.setAttribute("aria-label",tr("showLine") + " " + quote.line + " · " + tr(id));
+      line.addEventListener("click",() => showSource(id,quote));
+      block.append(line, document.createTextNode("“" + quote.text + "”"));
+      return block;
+    }
+    function renderExcerpt(id, evidence) {
+      const out = make("div","excerpt");
+      out.append(make("span","",tr(id)));
+      if (!Array.isArray(evidence) || !evidence.length) {
+        out.append(make("blockquote","",tr("nothing")));
+      } else for (const quote of evidence) out.append(quoteBlock(id,quote));
+      return out;
+    }
+    function render() {
+      renderDecision();
+      const out = $("results");
+      out.replaceChildren();
+      if (!result) { out.append(make("div","empty",tr("empty"))); return; }
+      const header = make("div","results-header"), title = make("div"), metrics = make("div","metrics");
+      title.append(make("span","eyebrow",tr(result.mode === "live" ? "live" : "preview")),make("h2","",tr("results")));
+      const rows = result.rows;
+      metrics.append(
+        make("span","chip changed",rows.filter(r => r.status === "changed" || r.status === "added").length + " " + tr("changedTotal")),
+        make("span","chip review",rows.filter(r => r.status === "review").length + " " + tr("reviewTotal")),
+        make("span","chip same",rows.filter(r => r.status === "same").length + " " + tr("sameTotal"))
+      );
+      if (rows.some(row=>row.status === "scoped")) metrics.append(make("span","chip scoped",tr("scoped")));
+      header.append(title,metrics);
+      out.append(header);
+      const signal = make("p","signal");
+      signal.append(make("strong","",tr(result.mode === "live" ? "clockedSignal" : "sampleSignal") + " ·"),
+        document.createTextNode(tr(result.signal.conflicts ? "conflict" : result.signal.duplicates ? "overlap" : "signalClear")));
+      out.append(signal);
+      const fields = make("div","fields");
+      for (const row of rows) {
+        const item = make("article","field"), titleRow = make("div","field-title");
+        if (row.key === "deadline") item.id = "deadline-evidence";
+        titleRow.append(make("h3","",tr(row.key)),make("span","chip " + row.status,tr(row.status)));
+        item.append(titleRow,make("p","field-note",tr(row.note)));
+        if (row.status !== "absent") {
+          const evidence = make("div","evidence");
+          evidence.append(renderExcerpt("earlier",row.before),renderExcerpt("revised",row.after));
+          item.append(evidence);
+        }
+        fields.append(item);
+      }
+      out.append(fields);
+    }
+    function refresh() {
+      document.documentElement.lang = locale;
+      document.querySelectorAll("[data-i18n]").forEach(node => { node.textContent = tr(node.dataset.i18n); });
+      for (const lang of ["en","de"]) $(lang).setAttribute("aria-pressed",String(lang === locale));
+      for (const name of Object.keys(samples)) $(name).setAttribute("aria-pressed",String(name === activeSample));
+      $("route").placeholder = tr("routePlaceholder");
+      $("route-options").hidden = activeSample !== "byGroup";
+      for (const group of Object.keys(groupLabels)) {
+        $("group-"+group).setAttribute("aria-pressed",String(groupLabels[group].toLowerCase() === routeValue().toLowerCase()));
+      }
+      for (const id of ["earlier","revised"]) $(id+"-count").textContent = $(id).value.length + " / " + LIMIT;
+      const status = $("connection");
+      status.classList.toggle("online",online);
+      status.textContent = tr(checking ? "checkingConnection" : online ? "online" : "example");
+      $("compare-text").textContent = tr(busy ? "checking" : "compare");
+      $("compare").disabled = busy || !online;
+      $("input-note").textContent = tr(online ? "liveNote" : "offlineNote");
+      $("message").textContent = error ? tr(error) : "";
+      render();
+    }
+    function edit() { revision += 1; activeSample = ""; result = null; error = ""; busy = false; refresh(); }
+    async function compare() {
+      if (busy || !online) return;
+      const earlier = $("earlier").value.trim(), revised = $("revised").value.trim(), route = routeValue();
+      if ([earlier,revised].some(x => x.length < 12 || x.length > LIMIT) || route.length > ROUTE_LIMIT) {
+        error = "bad_input"; refresh(); return;
+      }
+      $("earlier").value = earlier;
+      $("revised").value = revised;
+      const requestRevision = ++revision;
+      busy = true; error = ""; result = null; refresh();
+      try {
+        const response = await fetch("/api",{
+          method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({earlier,revised,route})
+        });
+        const body = await response.json();
+        if (revision !== requestRevision) return;
+        if (!response.ok || body.mode !== "live" || !Array.isArray(body.rows) || !body.signal || !body.decision) {
+          error = Object.hasOwn(strings.en,body.error) ? body.error : "provider_error";
+        } else {
+          result = body;
+        }
+      } catch (_) { if (revision === requestRevision) error = "provider_error"; }
+      finally { if (revision === requestRevision) { busy = false; refresh(); } }
+    }
+    async function connect() {
+      if (!checking) return;
+      try {
+        const response = await fetch("/api",{cache:"no-store"});
+        if (response.ok) online = (await response.json()).configured === true;
+      } catch (_) { online = false; }
+      checking = false; refresh();
+    }
+    for (const lang of ["en","de"]) $(lang).addEventListener("click",() => { locale = lang; refresh(); });
+    for (const name of Object.keys(samples)) $(name).addEventListener("click",() => loadSample(name));
+    for (const group of Object.keys(groupLabels)) $("group-"+group).addEventListener("click",() => { $("route").value = groupLabels[group]; changeRoute(); });
+    $("route").addEventListener("input",changeRoute);
+    for (const id of ["earlier","revised"]) $(id).addEventListener("input",edit);
+    $("clear").addEventListener("click",() => { $("earlier").value = ""; $("revised").value = ""; $("route").value = ""; edit(); $("earlier").focus(); });
+    $("compare").addEventListener("click",compare);
+    loadSample("byGroup");
+    connect();
+  </script>
+</body>
+</html>
