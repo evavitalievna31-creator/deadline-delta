@@ -42,8 +42,10 @@
     .route-options button[aria-pressed=true] { background:var(--green); color:white; border-color:var(--green); }
     .decision { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:15px 25px; padding:16px 19px; background:var(--white); border:1px solid #bed6c8; border-left:5px solid #417c62; border-radius:13px; }
     .decision.review { border-color:#e6cfad; border-left-color:#a76024; }
+    .decision.source { border-color:#c8dde0; border-left-color:var(--blue); }
     .decision .eyebrow { display:block; color:var(--green); margin-bottom:4px; }
     .decision.review .eyebrow { color:var(--amber); }
+    .decision.source .eyebrow { color:var(--blue); }
     .decision h2 { font:600 clamp(22px,3.2vw,31px)/1.05 Georgia,"Times New Roman",serif; letter-spacing:-.03em; }
     .decision p { color:var(--muted); font-size:13px; margin:5px 0 0; }
     .decision .route-tag { display:inline-block; margin-top:6px; color:var(--green); background:var(--mint); border-radius:5px; padding:2px 6px; font-size:11px; font-weight:760; overflow-wrap:anywhere; }
@@ -53,11 +55,13 @@
     .date-panel { min-width:0; padding:9px 11px; border-radius:9px; background:#f1f2eb; }
     .date-panel.current { background:var(--mint); }
     .review .date-panel.current { background:var(--amber-bg); }
+    .source .date-panel.current { background:var(--blue-bg); }
     .date-panel span { display:block; font-size:10px; color:var(--muted); font-weight:780; letter-spacing:.05em; text-transform:uppercase; }
     .date-panel strong { display:block; margin-top:3px; font-size:clamp(14px,1.7vw,19px); line-height:1.17; letter-spacing:-.015em; }
     .date-panel small { display:block; margin-top:3px; font-size:11px; color:var(--muted); }
     .date-panel.current strong { color:var(--green); }
     .review .date-panel.current strong { color:var(--amber); }
+    .source .date-panel.current strong { color:var(--blue); }
     .jump { display:table; margin-top:5px; font-size:12px; font-weight:770; text-decoration:underline; text-underline-offset:3px; color:var(--green); }
     .work { margin-top:20px; }
     .work-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
@@ -88,6 +92,7 @@
     .chip { display:inline-flex; align-items:center; color:var(--muted); background:#f0f1eb; border-radius:99px; padding:4px 9px; font-size:11px; font-weight:800; line-height:1.3; white-space:nowrap; }
     .chip.changed, .chip.review { color:var(--amber); background:var(--amber-bg); }
     .chip.added, .chip.same, .chip.scoped { color:var(--green); background:var(--mint); }
+    .chip.source { color:var(--blue); background:var(--blue-bg); }
     .signal { margin:12px 15px 0; padding:8px 10px; background:var(--blue-bg); border:1px solid #d8e5e6; border-radius:9px; font-size:12px; color:#274e55; }
     .signal strong { margin-right:5px; }
     .fields { padding:0 15px 10px; }
@@ -219,7 +224,9 @@
         empty:"Add two notices or choose an example to see a comparison.",
         deadline:"Deadline", documents:"Required documents", channel:"Submission channel", eligibility:"Eligibility",
         changed:"Differs", added:"New evidence", review:"Check first", same:"Matches", absent:"No evidence", scoped:"Matches your group",
-        deadlineCheck:"Deadline check", demoCheck:"Example result", verifiedCheck:"Clocked Verify · supported", routeCheck:"Clocked Rerank + Verify · supported",
+        deadlineCheck:"Deadline check", demoCheck:"Example result · no API call", verifiedCheck:"Clocked Verify · supported", routeCheck:"Clocked Rerank + Verify · supported",
+        sourceCheck:"Clocked Extract · exact source line", sourceHeading:"Date stated for your group", sourceDate:"Date in the cited line", source:"Source line found",
+        route_source:"This line names your group. The automated check did not confirm a single cutoff.",
         reviewHeading:"Confirm before applying", statedHeading:"The revised text supports a date", routeHeading:"Deadline for your group", seeEvidence:"See deadline evidence ↓",
         routeProof:"Why this date applies", routeTag:"Checking:", scopedDate:"Deadline for this group",
         oldDate:"Earlier deadline", revisedDate:"Revised deadline", referenceOnly:"Earlier version only", dateNotSet:"Needs confirmation", dateUnavailable:"No single date found",
@@ -233,7 +240,7 @@
         route_verified:"The revised text supports one cutoff for the selected group or route.",
         route_not_found:"No cutoff clause could be matched to this group or route. Use the wording from the notice or ask the issuer.",
         route_unavailable:"The group could not be matched right now. The extracted lines are shown below for review.",
-        route_unverified:"The revised text does not support one cutoff for this group or route. Check the conditions or ask the issuer.",
+        route_unverified:"The automated check did not confirm a single cutoff for this group or route. Check the revised wording or ask the issuer.",
         deadline_missing:"No revised deadline was found in the supplied text. Confirm with the issuer before using the old date.",
         deadline_incomplete:"The revised wording does not establish a single full date. Ask the issuer to confirm it.",
         verify_unsupported:"The extracted text does not establish one deadline for all applicants. Check the conditions or ask the issuer.",
@@ -274,7 +281,9 @@
         empty:"Füge zwei Hinweise ein oder wähle ein Beispiel.",
         deadline:"Bewerbungsfrist", documents:"Unterlagen", channel:"Einreichung", eligibility:"Voraussetzungen",
         changed:"Abweichend", added:"Neue Textstelle", review:"Bitte prüfen", same:"Übereinstimmung", absent:"Kein Beleg", scoped:"Gilt für deine Gruppe",
-        deadlineCheck:"Frist prüfen", demoCheck:"Beispielergebnis", verifiedCheck:"Clocked Verify · belegt", routeCheck:"Clocked Rerank + Verify · belegt",
+        deadlineCheck:"Frist prüfen", demoCheck:"Beispielergebnis · kein API-Aufruf", verifiedCheck:"Clocked Verify · belegt", routeCheck:"Clocked Rerank + Verify · belegt",
+        sourceCheck:"Clocked Extract · genaue Textstelle", sourceHeading:"Datum im Hinweis für deine Gruppe", sourceDate:"Datum in der Textstelle", source:"Textstelle gefunden",
+        route_source:"Diese Zeile nennt deine Gruppe. Die automatische Prüfung hat keine eindeutige Frist bestätigt.",
         reviewHeading:"Vor der Bewerbung nachfragen", statedHeading:"Die neue Fassung belegt eine Frist", routeHeading:"Frist für deine Gruppe", seeEvidence:"Belege zur Frist ansehen ↓",
         routeProof:"Warum diese Frist gilt", routeTag:"Geprüft wird:", scopedDate:"Frist für diese Gruppe",
         oldDate:"Frühere Frist", revisedDate:"Neue Frist", referenceOnly:"Nur frühere Fassung", dateNotSet:"Bestätigung nötig", dateUnavailable:"Keine eindeutige Frist gefunden",
@@ -288,7 +297,7 @@
         route_verified:"Die neue Fassung belegt eine Frist für die gewählte Gruppe oder den gewählten Einreichungsweg.",
         route_not_found:"Für diese Gruppe oder diesen Einreichungsweg wurde keine passende Frist gefunden. Verwende den Wortlaut aus dem Hinweis oder frag nach.",
         route_unavailable:"Die Gruppe konnte gerade nicht zugeordnet werden. Die gefundenen Textstellen stehen unten zur Prüfung.",
-        route_unverified:"Der neue Text belegt für diese Gruppe oder diesen Einreichungsweg keine eindeutige Frist. Prüfe die Bedingungen oder frag nach.",
+        route_unverified:"Die automatische Prüfung hat keine eindeutige Frist für diese Gruppe oder diesen Einreichungsweg bestätigt. Prüfe den neuen Wortlaut oder frag nach.",
         deadline_missing:"Im neuen Text wurde keine Frist gefunden. Frag nach, bevor du dich auf die frühere Frist verlässt.",
         deadline_incomplete:"Der neue Wortlaut belegt keine eindeutige vollständige Frist. Bitte den Herausgeber um Bestätigung.",
         verify_unsupported:"Die Textstelle belegt keine einheitliche Frist für alle Bewerbenden. Prüfe die Bedingungen oder frag nach.",
@@ -366,6 +375,56 @@
     let activeSample = "", result = null, error = "", revision = 0;
     const tr = key => strings[locale][key] || strings.en[key] || key;
     const routeValue = () => $("route").value.trim().replace(/\s+/g," ");
+    const cleanLabel = value => value.normalize("NFC").trim().replace(/\s+/g," ").toLowerCase();
+    const directCutoff = /^([\p{L}][\p{L}\p{N} &’'/–-]{0,89}?) must (?:apply|submit(?: (?:an?|the|their) applications?)?) by ((\d{1,2}) ([a-z]+) (\d{4}) at ((?:[01]\d|2[0-3]):[0-5]\d) (UTC|GMT|CET|CEST|EET|EEST|EST|EDT|PST|PDT))\.?$/iu;
+    const months = "january february march april may june july august september october november december".split(" ");
+    const noticeHeading = /^[\p{L}\p{N} &’'()/-]{1,100} [—–-] (?:revised|updated) (?:application )?notice\.?$/iu;
+    const portalInstruction = /^Upload (?:your |an? |the )?[\p{L}][\p{L} ,&’'/-]{0,65} (?:via|through|in|to) (?:the )?[\p{L}][\p{L} &’'/-]{0,55} portal\.?$/iu;
+    const qualifier = /\b(?:except|unless|if|including|before|after|until|instead|pending|subject to)\b/i;
+    const broadGroup = /\b(?:all|any|each|every|everyone|anyone|or)\b|^(?:applicants|candidates|applications|submissions|students)$/i;
+    function showExactSource(body, revised, route) {
+      const decision = body.decision;
+      if (body.mode !== "live" || !route || decision.state !== "review" || decision.after ||
+          !["route_unverified","verify_unavailable","route_not_found","route_unavailable"].includes(decision.reason)) return body;
+      const selected = cleanLabel(route);
+      if (typeof decision.route !== "string" || cleanLabel(decision.route) !== selected) return body;
+      const row = body.rows.find(item => item?.key === "deadline");
+      if (!Array.isArray(row?.after)) return body;
+      const groups = new Map();
+      for (const [index, raw] of revised.split("\n").entries()) {
+        const quote = raw.trim();
+        if (!quote) continue;
+        const text = quote.replace(/\s+/g," ");
+        const match = directCutoff.exec(text);
+        // Only promote a source line for an explicit schedule. Unrecognized
+        // wording elsewhere might change the date or impose an exception.
+        if (qualifier.test(text)) return body;
+        if (!match) {
+          if ((index === 0 && noticeHeading.test(text)) || portalInstruction.test(text)) continue;
+          return body;
+        }
+        const [, group, stamp, day, month, year, time, zone] = match;
+        const label = cleanLabel(group), monthNumber = months.indexOf(month.toLowerCase()) + 1;
+        if (broadGroup.test(label) || groups.has(label) || !monthNumber || Number(year) === 0) return body;
+        const date = year + "-" + String(monthNumber).padStart(2,"0") + "-" + day.padStart(2,"0");
+        const utc = new Date(date + "T00:00:00Z");
+        if (!Number.isFinite(utc.valueOf()) || utc.toISOString().slice(0,10) !== date) return body;
+        groups.set(label,{stamp, quote:{text:quote,line:index+1}, date:{date,time,zone:zone.toUpperCase()}});
+      }
+      const named = groups.get(selected);
+      if (!named) return body;
+      const containsLabel = (whole, part) => (" " + whole + " ").includes(" " + part + " ");
+      if ([...groups.keys()].some(label => label !== selected && (containsLabel(label,selected) || containsLabel(selected,label)))) return body;
+      const fromClocked = row.after.some(item => item?.line === named.quote.line &&
+        typeof item.text === "string" && named.quote.text.includes(item.text) &&
+        cleanLabel(item.text).includes(cleanLabel(named.stamp)));
+      if (!fromClocked) return body;
+      return {
+        ...body,
+        decision:{...decision,state:"source",reason:"route_source",after:named.date,proof:[named.quote]},
+        rows:body.rows.map(item => item === row ? {...item,status:"source",note:"route_source"} : item)
+      };
+    }
     function make(tag, className, value) {
       const node = document.createElement(tag);
       if (className) node.className = className;
@@ -429,22 +488,26 @@
       out.replaceChildren();
       out.hidden = !result?.decision;
       if (out.hidden) return;
-      const item = result.decision, review = item.state === "review";
+      const item = result.decision, review = item.state === "review", source = item.state === "source";
       const scoped = Boolean(item.route);
       out.classList.toggle("review",review);
+      out.classList.toggle("source",source);
       const copy = make("div");
-      copy.append(make("span","eyebrow",tr(result.mode === "example" ? "demoCheck" : review ? "deadlineCheck" : item.reranked ? "routeCheck" : "verifiedCheck")),
-        make("h2","",tr(review ? "reviewHeading" : scoped ? "routeHeading" : "statedHeading")),make("p","",tr(item.reason)));
+      const checkLabel = result.mode === "example" ? "demoCheck" : source ? "sourceCheck" :
+        review ? "deadlineCheck" : item.reranked ? "routeCheck" : "verifiedCheck";
+      const heading = source ? "sourceHeading" : review ? "reviewHeading" : scoped ? "routeHeading" : "statedHeading";
+      copy.append(make("span","eyebrow",tr(checkLabel)),make("h2","",tr(heading)),make("p","",tr(item.reason)));
       if (scoped) copy.append(make("span","route-tag",tr("routeTag") + " " + item.route));
       const proof = make("a","jump",tr("seeEvidence"));
       proof.href = "#deadline-evidence";
       copy.append(proof);
       const dates = make("div","dates");
-      dates.append(datePanel(tr("oldDate"),item.before,false,review || scoped),datePanel(tr(scoped ? "scopedDate" : "revisedDate"),item.after,true,review));
+      dates.append(datePanel(tr("oldDate"),item.before,false,review || scoped),
+        datePanel(tr(source ? "sourceDate" : scoped ? "scopedDate" : "revisedDate"),item.after,true,review));
       out.append(copy,dates);
       if (scoped && !review && item.proof?.length) {
         const why = make("div","route-proof");
-        why.append(make("span","eyebrow",tr("routeProof")));
+        why.append(make("span","eyebrow",tr(source ? "source" : "routeProof")));
         for (const quote of item.proof) why.append(quoteBlock("revised",quote));
         out.append(why);
       }
@@ -486,7 +549,7 @@
       const rows = result.rows;
       metrics.append(
         make("span","chip changed",rows.filter(r => r.status === "changed" || r.status === "added").length + " " + tr("changedTotal")),
-        make("span","chip review",rows.filter(r => r.status === "review").length + " " + tr("reviewTotal")),
+        make("span","chip review",rows.filter(r => r.status === "review" || r.status === "source").length + " " + tr("reviewTotal")),
         make("span","chip same",rows.filter(r => r.status === "same").length + " " + tr("sameTotal"))
       );
       if (rows.some(row=>row.status === "scoped")) metrics.append(make("span","chip scoped",tr("scoped")));
@@ -551,7 +614,7 @@
         if (!response.ok || body.mode !== "live" || !Array.isArray(body.rows) || !body.signal || !body.decision) {
           error = Object.hasOwn(strings.en,body.error) ? body.error : "provider_error";
         } else {
-          result = body;
+          result = showExactSource(body,revised,route);
         }
       } catch (_) { if (revision === requestRevision) error = "provider_error"; }
       finally { if (revision === requestRevision) { busy = false; refresh(); } }
