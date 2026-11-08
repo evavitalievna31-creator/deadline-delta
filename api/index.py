@@ -322,36 +322,75 @@ def select_route_clauses(client, quotes, route):
         return [], "route_unavailable"
 
 
+def question_answered(raw):
+    value = raw.get("answers_question")
+    if isinstance(value, dict):
+        value = value.get("value", value.get("answer"))
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return {"yes": True, "true": True, "no": False, "false": False}.get(normalize(value))
+    return None
+
+
+def grounding_verdict(raw):
+    value = raw.get("verdict") if isinstance(raw, dict) else None
+    return normalize(value).replace("_", " ").replace("-", " ") if isinstance(value, str) else ""
+
+
 def verify_deadline(client, revised, parts, route="", proof=None):
     iso, clock, zone = parts
     stamp = " ".join(piece for piece in (iso, clock, zone.upper()) if piece)
-    subject = (f"the applicant group or submission route {json.dumps(route, ensure_ascii=False)}"
-               if route else "all applicants")
-    claim = f"The revised notice establishes one applicable submission deadline for {subject}: {stamp}."
-    if proof:
-        claim += " The wording that applies to this group or route is " + json.dumps(proof["text"], ensure_ascii=False) + "."
+    subject = f'applicants in the group or route "{route}"' if route else "all applicants"
+    answer = f"The only application submission deadline for {subject} is {stamp}."
+    if route and proof:
+        # A self-contained source sentence is a clearer answer than a separate
+        # normalized claim followed by a second claim about its wording.
+        label = re.escape(normalize(route))
+        if re.match(rf"^{label} must (?:submit|apply) by ", normalize(proof["text"])):
+            answer = proof["text"]
+    request = {
+        "documents": [{"id": "revised-notice", "text": revised}],
+        "question": f"What is the only application submission deadline for {subject}?",
+        "answer": answer,
+        "evidence": "all",
+    }
     try:
-        raw = client.grounding(
-            documents=[{"id": "revised-notice", "text": revised}],
-            question=(f"What single submission cutoff does the revised notice explicitly give for {subject}? "
-                      "Check whether an exception, a pending date, or another cutoff also applies to that scope."),
-            answer=claim,
-            evidence="all",
-        )
-        verdict = raw.get("verdict")
-        answers = raw.get("answers_question")
+        pipeline = getattr(client, "pipeline", None)
+        if callable(pipeline):
+            # Let the service's own grounding guard interpret its verdict.
+            response = pipeline(text=revised, steps=[{"grounding": request, "stop": True}], on_error="stop")
+            steps = response.get("steps")
+            if (not isinstance(steps, list) or len(steps) != 1 or not isinstance(steps[0], dict)
+                    or steps[0].get("endpoint") != "grounding" or steps[0].get("status") != 200
+                    or "stopped" not in response):
+                return "verify_unavailable"
+            raw = steps[0].get("result")
+            verdict = grounding_verdict(raw)
+            if not verdict:
+                return "verify_unavailable"
+            stopped = response["stopped"]
+            if stopped is not None:
+                if isinstance(stopped, dict) and stopped.get("reason") == "flagged" and stopped.get("endpoint") == "grounding":
+                    return "verify_unsupported"
+                return "verify_unavailable"
+            if question_answered(raw) is False or verdict in {
+                "unsupported", "not supported", "partially supported", "ungrounded",
+                "not grounded", "contradicted", "contradictory", "insufficient evidence",
+            }:
+                return "verify_unsupported"
+            return "supported"
+        # Older client adapters can use Verify directly with a strict verdict check.
+        raw = client.grounding(**request)
+        verdict = grounding_verdict(raw)
+        if not verdict:
+            return "verify_unavailable"
+        if verdict in {"supported", "fully supported", "grounded", "fully grounded"} and question_answered(raw) is True:
+            return "supported"
+        return "verify_unsupported"
     except Exception:
         # Comparison and source excerpts remain useful if Verify is temporarily unavailable.
         return "verify_unavailable"
-    if not isinstance(verdict, str) or not verdict.strip():
-        return "verify_unavailable"
-    verdict = normalize(verdict).replace("_", " ").replace("-", " ")
-    if isinstance(answers, dict):
-        answers = answers.get("value", answers.get("answer"))
-    answers_yes = answers is True or isinstance(answers, str) and normalize(answers) in {"true", "yes"}
-    if verdict in {"supported", "fully supported", "grounded", "fully grounded"} and answers_yes:
-        return "supported"
-    return "verify_unsupported"
 
 
 def deadline_decision(client, revised, row, route=""):
